@@ -1,3 +1,8 @@
+#######################
+#Cat Invaders: A space invaders game with nyan cat(?)
+#IMPORTANT: Should I use pygame Sprite classes?
+###
+
 import pygame
 import time
 
