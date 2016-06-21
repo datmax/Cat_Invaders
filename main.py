@@ -28,7 +28,7 @@ pygame.display.set_caption('Space Invaders')
 def cat(x,y):
 	game_display.blit(cat_img,(x,y))
 
-def laser_shoot(x,y,speed):
+def laser_shoot(x,y,speed):				#Doesn't work.I'm actually trying to solve 
 	if shoot == True:
 		game_display.blit(laser,(x,y))
 		y -= speed
