@@ -10,7 +10,7 @@ import time
 
 pygame.init()
 
-shoot = False								#for laser shoot.
+shoot = False								#for laser shoot.It will be set to True when you hit space.
 
 clock = pygame.time.Clock()
 display_width = 600
