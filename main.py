@@ -1,7 +1,8 @@
-#######################
-#Cat Invaders: A space invaders game with nyan cat(?)
-#IMPORTANT: Should I use pygame Sprite classes?
-###
+"""
+Nyan invaders!A simple space shooter game with python and pygame.
+Created by: Max Datsun 
+Github: https://github.com/datmax
+"""
 
 import pygame
 import time
@@ -9,9 +10,7 @@ import time
 
 pygame.init()
 
-new_shoot = False
-shoot = False
-position = 0											##for laser shoot.
+shoot = False								#for laser shoot.
 
 clock = pygame.time.Clock()
 display_width = 600
@@ -20,7 +19,9 @@ display_heigth = 800
 background = pygame.image.load('background.png')
 cat_img = pygame.image.load('cat1.png')
 cat_heigth = 23
-laser = pygame.image.load('fire1.png')
+laser = pygame.image.load('bullet.png')
+laser_heigth = 30
+
 
 game_display = pygame.display.set_mode((display_width,display_heigth))
 pygame.display.set_caption('Space Invaders')
@@ -28,21 +29,12 @@ pygame.display.set_caption('Space Invaders')
 def cat(x,y):
 	game_display.blit(cat_img,(x,y))
 
-def laser_shoot(x,y,speed):				#Doesn't work.I'm actually trying to solve 
-	if shoot == True:
-		game_display.blit(laser,(x,y))
-		y -= speed
-		if y == 0:
-			y = display_heigth*0.79 - cat_heigth
 
 
+def get_pos(list):
+	return list[-1][0]
 
-def getpos(pos):
-	global position
-	if position == 0:
-		position = pos 
-	else:
-		return 
+
 
 def starting_screen():
 	pass
@@ -58,37 +50,56 @@ def game_loop():
 	y = display_heigth*0.8
 	laser_speed = 10
 	laser_y = display_heigth*0.79 - cat_heigth
+	cat_position = []
+	bullets = [laser]
+
 
 	change_x = 0
 	while not game_exit:
+		ms = clock.tick(60)
+		print ms 
 		for event in pygame.event.get():
 			print event
 			if event.type == pygame.QUIT:
 				exit()
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_RIGHT:
-					change_x = 5
+					change_x = 8
 				elif event.key == pygame.K_LEFT:
-					change_x = -5
+					change_x = -8
 				if event.key == pygame.K_SPACE:
 					shoot = True
+					laser_x = get_pos(cat_position)		#if you press again space,the laser will jump :/
+
+					
 					
 					
 			if event.type == pygame.KEYUP:
-				if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-					change_x = 0
-			
+				if event.key == pygame.K_LEFT:
+					change_x += 8
+				if event.key == pygame.K_RIGHT:
+					change_x -=8			
+				
 
 
 
 		x += change_x
 		game_display.blit(background,(0,0))
 		cat(x,y)
+		cat_position.append((x,y))
+
+		
+		if shoot == True:			
+			game_display.blit(bullets[0],(laser_x,laser_y))
+			laser_y -= laser_speed
+			if laser_y < 0:
+				shoot = False
+				laser_y = display_heigth*0.79 - cat_heigth - laser_heigth
+		#TODO:shoot more than 1 laser.
 
 
-		getpos(x)
-		laser_x = position
-		laser_shoot(laser_x,laser_y,laser_speed)
+
+		
 					
 		pygame.display.update()
 		clock.tick(60)
