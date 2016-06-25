@@ -4,7 +4,6 @@ Created by: Max Datsun
 Github: https://github.com/datmax
 
 TODO:
-	add boundaries to the surface
 	add enemies
 	add starting screen
 	add score
@@ -61,7 +60,7 @@ def game_loop():
 	laser_speed = 10
 	cat_position = []
 	bullets = []	
-	enemies = [[20,20],[50,23]]
+	enemies = []
 	enemy_x = 10
 	enemy_y = 10
 
@@ -71,22 +70,22 @@ def game_loop():
 		new_time = pygame.time.get_ticks()/1000
 
 		for event in pygame.event.get():
-			print event
 			if event.type == pygame.QUIT:
 				exit()
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_RIGHT:
 					change_x = 8
-				if event.key == pygame.K_LEFT and cat_x > 5:
+				if event.key == pygame.K_LEFT:
 					change_x = -8
+				
 				if event.key == pygame.K_SPACE:
 					bullets.append([cat_x + cat_width/2 ,cat_y])						
 					
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_LEFT:
-					change_x = -1
+					change_x = 0
 				if event.key == pygame.K_RIGHT:
-					change_x = +1			
+					change_x = 0			
 				
 
 
@@ -97,6 +96,10 @@ def game_loop():
 				bullets.remove(bullet)
 		
 		cat_x += change_x
+		if cat_x >= display_width - cat_width:
+			cat_x = display_width - cat_width 
+		if cat_x <= 0:
+			cat_x = 0
 		game_display.blit(background,(0,0))
 		cat(cat_x,cat_y)
 		for bullet in bullets:
