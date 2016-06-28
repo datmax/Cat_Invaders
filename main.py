@@ -6,8 +6,8 @@ Github: https://github.com/datmax
 TODO:
 	add lives and damage to shoots(and maybe even different shoots or ships?)
 	add new levels(well,it's too early for this)
+	add music(already did it, but I forgot to commit on github and I formatted the Pc :c)
 """
-
 
 
 
@@ -36,9 +36,8 @@ cat_img = pyganim.PygAnimation([(os.path.join('images','cat1.png'), 200),(os.pat
 								(os.path.join('images','cat5.png'), 200)])
 
 cat_death_animation = pyganim.PygAnimation([(os.path.join('images', 'catdie1.png'),300),
-											(os.path.join('images', 'catdie2.png'),300),
-											(os.path.join('images', 'catdie3.png'),300),
-											(os.path.join('images', 'catdie4.png'),300)])
+				    					 	(os.path.join('images', 'catdie2.png'),300),
+											(os.path.join('images', 'catdie3.png'),300)])
 cat_death_animation.play()
 
 cat_img.play()
@@ -92,6 +91,8 @@ def is_player_hit(bullet_list, player):
 		if bullet[1] > player[1] - 20 and player[0] < bullet[0] < player[0] + cat_width:
 			bullet_list.remove(bullet)
 			return True
+		if bullet[1] > display_heigth:
+			bullet_list.remove(bullet)
 
 
 def invert_speed(speed): # when the enemy line touches a border of the screen,
@@ -164,6 +165,28 @@ def death_screen(playerpos):
 		pygame.display.update()
 
 
+def you_win():
+	win = True
+	while win:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				exit_game()
+
+		font = pygame.font.Font('Munro.ttf', 50)
+		text = font.render('Level 2', True, white)
+		little_font = pygame.font.Font('Munro.ttf', 25)
+		little_text = font.render('Press SPACE to continue', True, white)
+		little_text_rect = little_text.get_rect()
+		little_text_rect.center = display_width * 0.1, display_heigth * 0.65
+		text_rect = text.get_rect()
+		text_rect.center = display_width * 0.35, display_heigth * 0.5
+		game_display.blit(text, text_rect.center)
+		game_display.blit(little_text, little_text_rect.center)
+
+
+		pygame.display.update()
+
+
 
 def game_loop():
 	#when user press SPACE, turns to True and enemies shoot
@@ -221,6 +244,9 @@ def game_loop():
 			cat_img.blit(game_display, (-1,-1))
 			death_screen([cat_x, cat_y])
 
+		if enemies == []:
+			you_win()
+
 		for b in range(len(bullets)):
 			bullets[b][1]-= bullet_speed	
 		for bullet in bullets:
@@ -264,9 +290,6 @@ def game_loop():
 
 		if is_player_hit(enemy_bullets, [cat_x, cat_y]):
 			lives -= 1
-
-
-		
 
 		pygame.display.flip()
 
