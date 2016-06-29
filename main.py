@@ -6,7 +6,6 @@ Github: https://github.com/datmax
 TODO:
 	add lives and damage to shoots(and maybe even different shoots or ships?)
 	add new levels(well,it's too early for this)
-	add music(already did it, but I forgot to commit on github and I formatted the Pc :c)
 """
 
 
@@ -27,6 +26,15 @@ display_width = 600
 display_heigth = 800
 
 
+#MUSIC/SOUNDS
+pygame.mixer.music.load(os.path.join('sounds', 'backgroundmusic.mp3'))
+coin = pygame.mixer.Sound(os.path.join('sounds', 'coin.wav'))
+shoot = pygame.mixer.Sound(os.path.join('sounds', 'shoot.wav'))
+death = pygame.mixer.Sound(os.path.join('sounds', 'death.wav'))
+enemy_shoot = pygame.mixer.Sound(os.path.join('sounds', 'enemy_shoot.aiff'))
+
+#IMAGES
+cat_icon = pygame.image.load(os.path.join('images', 'cat_icon.png'))
 life_img = pygame.image.load(os.path.join('images','life.png'))
 enemy_img = pygame.image.load(os.path.join('images', 'enemy.png'))
 background = pygame.image.load(os.path.join('images','background.png'))
@@ -36,7 +44,7 @@ cat_img = pyganim.PygAnimation([(os.path.join('images','cat1.png'), 200),(os.pat
 								(os.path.join('images','cat5.png'), 200)])
 
 cat_death_animation = pyganim.PygAnimation([(os.path.join('images', 'catdie1.png'),300),
-				    					 	(os.path.join('images', 'catdie2.png'),300),
+											(os.path.join('images', 'catdie2.png'),300),
 											(os.path.join('images', 'catdie3.png'),300)])
 cat_death_animation.play()
 
@@ -53,6 +61,7 @@ enemy_laser_img = pygame.image.load(os.path.join('images','enemy_shoot.png'))
 
 game_display = pygame.display.set_mode((display_width,display_heigth))
 pygame.display.set_caption('Cat Invaders')
+pygame.display.set_icon(cat_icon)
 
 
 
@@ -82,9 +91,11 @@ def is_hit(bullet_list, enemy_list): #checks if the bullet hits the enemies.
 		for enemy in enemy_list:
 			if bullet[1] <= enemy[1] + enemy_heigth:
 				if enemy[0] < bullet[0] < enemy[0] + enemy_width:
+					coin.play()
 					bullet_list.remove(bullet)
 					enemy_list.remove(enemy)
 					return True
+
 
 def is_player_hit(bullet_list, player):
 	for bullet in bullet_list:
@@ -123,6 +134,7 @@ def display_score(count):
 
 def starting_screen():
 	Intro = True
+	pygame.mixer.music.play(-1)
 	while Intro:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -211,8 +223,11 @@ def game_loop():
 	create_enemies(enemy_x,enemy_y,90,enemies)
 	bullet_x = random.randrange(0, len(enemies))
 
-
+	#for player movement
 	change_x = 0
+
+	#stop music
+	pygame.mixer.music.stop()
 
 	#main loop
 	while not game_exit:
@@ -226,6 +241,7 @@ def game_loop():
 					change_x = -5
 				
 				if event.key == pygame.K_SPACE:
+					shoot.play()
 					make_bullets(bullets, cat_x, cat_y)
 					enemy_can_shoot = True
 					
@@ -241,8 +257,10 @@ def game_loop():
 		game_display.blit(background,(0,0))
 
 		if lives == 0:
+			death.play()
 			cat_img.blit(game_display, (-1,-1))
 			death_screen([cat_x, cat_y])
+
 
 		if enemies == []:
 			you_win()
@@ -258,6 +276,7 @@ def game_loop():
 		if enemy_can_shoot:
 			now = pygame.time.get_ticks()
 			if now - last >= cooldown:
+				enemy_shoot.play()
 				last = pygame.time.get_ticks()
 				bullet_x = random.randrange(0, len(enemies))
 				enemy_bullets.append([enemies[bullet_x][0] + (enemy_width / 2), enemy_y])	
@@ -290,6 +309,9 @@ def game_loop():
 
 		if is_player_hit(enemy_bullets, [cat_x, cat_y]):
 			lives -= 1
+
+
+		
 
 		pygame.display.flip()
 
